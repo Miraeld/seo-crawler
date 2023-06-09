@@ -9,6 +9,7 @@
 namespace SEO_Crawler\Db;
 
 use SEO_Crawler\SeoCrawlerAbstract;
+use SEO_Crawler\Url\SeoCrawlerUrl;
 
 class SeoCrawlerDb extends SeoCrawlerAbstract {
 	/**
@@ -44,4 +45,45 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 		$this->wpdb->query( $this->wpdb->prepare( $sql ) );
 	}
 
+	/**
+	 * Retrieves and displays the latest results
+	 *
+	 * @return array Contains the latest crawl from the database, empty if there are none.
+	 */
+	public function fetch_all() {
+		$results = $this->wpdb->get_results( "SELECT * FROM {$this->table}" );
+		$output  = [];
+		foreach ( $results as $result ) {
+			$output[] = new SeoCrawlerUrl(
+				$result->url,
+				$result->crawl_date
+			);
+		}
+		return $output;
+	}
+
+	/**
+	 * Deletes the previous results from the database
+	 *
+	 * @return void
+	 */
+	public function delete_previous_results() {
+		$this->wpdb->query( "TRUNCATE TABLE {$this->table}" );
+	}
+
+	/**
+	 * Insert a new row into the specified table.
+	 *
+	 * @param string $table The name of the table.
+	 * @param array  $fields The data to insert (in column => value pairs).
+	 * @param string $s The format of each of the values in the data.
+	 * @return void
+	 */
+	public function insert( $table, $fields, $s ) {
+		$this->wpdb->insert(
+			$table,
+			$fields,
+			$s
+		);
+	}
 }

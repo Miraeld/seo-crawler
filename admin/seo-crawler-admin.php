@@ -46,4 +46,39 @@ function seo_crawler_settings_page() {
 	// Render the settings page.
 	seo_crawler_render_view( 'admin/settings/index' );
 
+	require_once 'seo-crawler-form-handler.php';
+	seo_crawler_form_handler();
+}
+
+/**
+ * Schedules the crawl event if it's not already scheduled.
+ */
+function schedule_crawl_event() {
+	if ( ! wp_next_scheduled( 'seo_crawler_crawl_event' ) ) {
+		wp_schedule_event( time(), 'hourly', 'seo_crawler_crawl_event' );
+	}
+}
+
+add_action( 'seo_crawler_crawl_event', 'crawl_task' );
+
+/**
+ * Performs the crawling task.
+ *
+ * @param bool $render Whether to render the crawl results or not.
+ */
+function crawl_task( $render = false ) {
+	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
+	$crawler->executeCrawl();
+
+	if ( $render ) {
+		seo_crawler_render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
+	}
+}
+
+/**
+ * Displays the latest crawl results.
+ */
+function display_latest_results() {
+	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
+	seo_crawler_render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
 }
