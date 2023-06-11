@@ -1,4 +1,7 @@
 <?php
+
+namespace SEO_Crawler;
+
 /**
  * SeoCrawlerAbstract
  *
@@ -6,8 +9,6 @@
  *
  * @package  SEO_Crawler
  */
-namespace SEO_Crawler;
-
 abstract class SeoCrawlerAbstract {
 	/**
 	 * A WordPress Database object, which is used to interact with the database.

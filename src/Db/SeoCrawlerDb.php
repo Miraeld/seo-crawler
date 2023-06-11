@@ -42,7 +42,7 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 	 */
 	public function drop_table() {
 		$sql = "DROP TABLE IF EXISTS {$this->table};";
-		$this->wpdb->query( $this->wpdb->prepare( $sql ) );
+		$this->wpdb->query( $this->wpdb->prepare( $sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL -- The SQL is already prepared.
 	}
 
 	/**
@@ -51,8 +51,9 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 	 * @return array Contains the latest crawl from the database, empty if there are none.
 	 */
 	public function fetch_all() {
-		$results = $this->wpdb->get_results( "SELECT * FROM {$this->table}" );
-		$output  = [];
+		$results = $this->wpdb->get_results( "SELECT * FROM {$this->table}" ); // phpcs:ignore WordPress.DB.PreparedSQL -- There is no need to prepare for this sql
+
+		$output = [];
 		foreach ( $results as $result ) {
 			$output[] = new SeoCrawlerUrl(
 				$result->url,
@@ -68,7 +69,7 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 	 * @return void
 	 */
 	public function delete_previous_results() {
-		$this->wpdb->query( "TRUNCATE TABLE {$this->table}" );
+		$this->wpdb->query( "TRUNCATE TABLE {$this->table}" ); // phpcs:ignore WordPress.DB.PreparedSQL -- There is no need to prepare for this sql
 	}
 
 	/**
