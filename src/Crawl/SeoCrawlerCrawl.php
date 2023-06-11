@@ -138,8 +138,7 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 		}
 
 		foreach ( $links as $link ) {
-			$this->wpdb->insert(
-				$this->table,
+			$this->crawler_db->insert(
 				[ 'url' => $link ],
 				[ '%s' ]
 			);
