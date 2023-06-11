@@ -3,23 +3,23 @@
 namespace SEO_Crawler\Crawl;
 
 use SEO_Crawler\SeoCrawlerAbstract;
-use SEO_Crawler\Db\SeoCrawlerDb;
+use SEO_Crawler\Db\DbTable;
 use SEO_Crawler\Exceptions\CrawlException;
 use SEO_Crawler\Exceptions\UnexpectedStatusCodeException;
 use SEO_Crawler\Exceptions\InvalidParameterTypeException;
-use SEO_Crawler\Utils\SeoCrawlerCommon;
+use SEO_Crawler\Utils\Common;
 use WP_Error;
 
 /**
- * Class SeoCrawlerCrawl
+ * Class Crawler
  * Handles the crawling operations for SEO
  */
-class SeoCrawlerCrawl extends SeoCrawlerAbstract {
+class Crawler extends SeoCrawlerAbstract {
 
 	/**
-	 * Instance of SeoCrawlerDb to communicate with the database
+	 * Instance of DbTable to communicate with the database
 	 *
-	 * @var SeoCrawlerDb
+	 * @var DbTable
 	 */
 	private $crawler_db;
 
@@ -37,7 +37,7 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 	public function __construct() {
 		parent::__construct();
 		$this->home_url   = get_home_url();
-		$this->crawler_db = new SeoCrawlerDb();
+		$this->crawler_db = new DbTable();
 	}
 
 	/**
@@ -55,12 +55,12 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 	}
 
 	/**
-	 * Deletes the previous results from the database
+	 * Deletes the previous results from the database.
 	 *
-	 * @return void
+	 * @return bool true if it worked, false if there has been an error.
 	 */
 	protected function deletePreviousResults() {
-		$this->crawler_db->delete_previous_results();
+		return $this->crawler_db->delete_previous_results();
 	}
 
 	/**
@@ -69,12 +69,15 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 	 * @return void
 	 */
 	protected function deleteSitemapFile() {
+		require_once(ABSPATH . 'wp-admin/includes/file.php');
+		WP_Filesystem();
+		global $wp_filesystem;
+
 		$sitemap_file = ABSPATH . 'sitemap.html';
-		if ( file_exists( $sitemap_file ) ) {
-			unlink( $sitemap_file );
+		if ($wp_filesystem->exists($sitemap_file)) {
+			$wp_filesystem->delete($sitemap_file);
 		}
 	}
-
 	/**
 	 * Crawls the internal links of a given URL
 	 *
@@ -113,7 +116,7 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 				$href = $anchor->getAttribute( 'href' );
 
 				// Check if the link is internal.
-				if ( SeoCrawlerCommon::is_internal_link( $href ) ) {
+				if ( Common::is_internal_link( $href ) ) {
 					$internal_links[] = $href;
 				}
 			}
@@ -129,7 +132,7 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 	 *
 	 * @param array $links The links to store.
 	 *
-	 * @return void
+	 * @return bool
 	 * @throws InvalidParameterTypeException When $links is not an array.
 	 */
 	protected function storeResults( $links ) {
@@ -143,12 +146,14 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 				[ '%s' ]
 			);
 		}
+
+		return true;
 	}
 
 	/**
 	 * Saves the content of the home page as an HTML file
 	 *
-	 * @return void
+	 * @return bool true on success, false on error
 	 */
 	protected function saveHomePageAsHtml() {
 		$response = wp_remote_get( $this->home_url );
@@ -164,7 +169,9 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 			}
 
 			if ( $wp_filesystem ) {
-				$wp_filesystem->put_contents( $html_file_path, $homepage_content, FS_CHMOD_FILE );
+				return $wp_filesystem->put_contents( $html_file_path, $homepage_content, FS_CHMOD_FILE );
+			} else {
+				return false;
 			}
 		}
 	}
@@ -175,7 +182,7 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 	 *
 	 * @param array $links The links to include in the sitemap.
 	 *
-	 * @return void
+	 * @return bool true on success, false on error
 	 */
 	protected function createSitemapFile( $links ) {
 		$sitemap_file = ABSPATH . 'sitemap.html';
@@ -193,7 +200,9 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 		}
 
 		if ( $wp_filesystem ) {
-			$wp_filesystem->put_contents( $sitemap_file, $sitemap_html, FS_CHMOD_FILE );
+			return $wp_filesystem->put_contents( $sitemap_file, $sitemap_html, FS_CHMOD_FILE );
+		} else {
+			return false;
 		}
 	}
 

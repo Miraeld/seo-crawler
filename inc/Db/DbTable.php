@@ -11,14 +11,14 @@ namespace SEO_Crawler\Db;
 use SEO_Crawler\SeoCrawlerAbstract;
 use SEO_Crawler\Url\SeoCrawlerUrl;
 
-class SeoCrawlerDb extends SeoCrawlerAbstract {
+class DbTable extends SeoCrawlerAbstract {
 	/**
 	 * Creates the database table used by the plugin.
 	 *
 	 * This method checks for the existence of the table, and if it doesn't exist,
 	 * it creates it with the appropriate structure.
 	 *
-	 * @return void
+	 * @return array Strings containing the results of the various update queries
 	 */
 	public function create_table() {
 		$charset_collate = $this->wpdb->get_charset_collate();
@@ -29,7 +29,7 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
             UNIQUE KEY id (id)
         ) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
+		return dbDelta( $sql );
 	}
 
 	/**
@@ -38,11 +38,11 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 	 * This method checks for the existence of the table, and if it exists,
 	 * it drops it from the database.
 	 *
-	 * @return void
+	 * @return bool true if success, false if error
 	 */
 	public function drop_table() {
 		$sql = "DROP TABLE IF EXISTS {$this->table};";
-		$this->wpdb->query( $this->wpdb->prepare( $sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL -- The SQL is already prepared.
+		return $this->wpdb->query( $this->wpdb->prepare( $sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL -- The SQL is already prepared.
 	}
 
 	/**
@@ -66,10 +66,10 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 	/**
 	 * Deletes the previous results from the database
 	 *
-	 * @return void
+	 * @return bool true if it worked, false if there has been an issue.
 	 */
 	public function delete_previous_results() {
-		$this->wpdb->query( "TRUNCATE TABLE {$this->table}" ); // phpcs:ignore WordPress.DB.PreparedSQL -- There is no need to prepare for this sql
+		return $this->wpdb->query( "TRUNCATE TABLE {$this->table}" ); // phpcs:ignore WordPress.DB.PreparedSQL -- There is no need to prepare for this sql
 	}
 
 	/**
@@ -80,10 +80,10 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 	 *                  If string, that format will be used for all of the values in $data.
 	 *                  A format is one of '%d', '%f', '%s' (integer, float, string).
 	 *                  If omitted, all values in $data will be treated as strings unless otherwise specified in wpdb::$field_types.
-	 * @return void
+	 * @return int|bool Number of row inserted | false if error
 	 */
 	public function insert( $fields, $format = null ) {
-		$this->wpdb->insert(
+		return $this->wpdb->insert(
 			$this->table,
 			$fields,
 			$format

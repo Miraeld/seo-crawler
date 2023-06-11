@@ -5,24 +5,19 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use \SEO_Crawler\Utils\SeoCrawlerView;
+use \SEO_Crawler\Utils\Render;
+use \SEO_Crawler\Utils\Loader;
 
-/**
- * Hook into the admin_menu action to add SEO Crawler to the WordPress admin menu.
- */
-add_action( 'admin_menu', 'seo_crawler_add_admin_menu' );
+
+$seo_crawler_loader = new Loader();
+$seo_crawler_loader->add_action( 'admin_menu', 'seo_crawler_add_admin_menu' );
+$seo_crawler_loader->add_action( 'seo_crawler_crawl_event', 'seo_crawler_crawl_task' );
+
 
 /**
  * Adds a new top-level menu page for the SEO Crawler.
  */
 function seo_crawler_add_admin_menu() {
-	// The title to be displayed in the browser title bar.
-	// The text to be used for the menu.
-	// The required capability of users to access this menu.
-	// The slug by which this menu will be referred to.
-	// The callback function used to render the settings page.
-	// The icon to be used for this menu.
-	// The position in the menu order this one should appear.
 	add_menu_page(
 		'SEO Crawler Settings',
 		'SEO Crawler',
@@ -44,7 +39,7 @@ function seo_crawler_settings_page() {
 	}
 
 	// Render the settings page.
-	SeoCrawlerView::render_view( 'admin/settings/index' );
+	Render::render_view( 'admin/settings/index' );
 
 	require_once 'seo-crawler-form-handler.php';
 	seo_crawler_form_handler();
@@ -54,12 +49,13 @@ function seo_crawler_settings_page() {
  * Schedules the crawl event if it's not already scheduled.
  */
 function seo_crawler_schedule_crawl_event() {
-	if ( ! wp_next_scheduled( 'seo_crawler_crawl_event' ) ) {
-		wp_schedule_event( time(), 'hourly', 'seo_crawler_crawl_event' );
+	if ( wp_next_scheduled( 'seo_crawler_crawl_event' ) ) {
+		wp_clear_scheduled_hook( 'seo_crawler_crawl_event' );
 	}
+	wp_schedule_event( time(), 'hourly', 'seo_crawler_crawl_event' );
+	( new SEO_Crawler\Utils\Notice( 'success', 'Next crawl schedule in a hour!' ) )->render();
 }
 
-add_action( 'seo_crawler_crawl_event', 'seo_crawler_crawl_task' );
 
 /**
  * Performs the crawling task.
@@ -67,11 +63,11 @@ add_action( 'seo_crawler_crawl_event', 'seo_crawler_crawl_task' );
  * @param bool $render Whether to render the crawl results or not.
  */
 function seo_crawler_crawl_task( $render = false ) {
-	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
+	$crawler = new \SEO_Crawler\Crawl\Crawler();
 	$crawler->executeCrawl();
 
 	if ( $render ) {
-		SeoCrawlerView::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
+		Render::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
 	}
 }
 
@@ -79,6 +75,7 @@ function seo_crawler_crawl_task( $render = false ) {
  * Displays the latest crawl results.
  */
 function seo_crawler_display_latest_results() {
-	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
-	SeoCrawlerView::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
+	$crawler = new \SEO_Crawler\Crawl\Crawler();
+	Render::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
 }
+$seo_crawler_loader->run();

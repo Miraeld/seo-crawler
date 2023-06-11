@@ -4,7 +4,7 @@ namespace SEO_Crawler\Utils;
 
 use \SEO_Crawler\Exceptions\InvalidParameterTypeException;
 
-class SeoCrawlerCommon {
+class Common {
 
 	/**
 	 * Private constructor to prevent instantiation.

@@ -2,7 +2,7 @@
 
 namespace SEO_Crawler\Utils;
 
-class SeoCrawlerView {
+class Render {
 
 	/**
 	 * Private constructor to prevent instantiation.
