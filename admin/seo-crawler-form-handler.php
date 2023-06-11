@@ -23,7 +23,7 @@ function seo_crawler_form_handler() {
 	/**
 	 * Verify that the nonce is valid. If not, return an error.
 	 */
-	$nonce = isset( $_POST['seo_crawler_nonce'] ) ? wp_unslash( sanitize_text_field( $_POST['seo_crawler_nonce'] ) ) : '';
+	$nonce = isset( $_POST['seo_crawler_nonce'] ) ? wp_unslash( sanitize_text_field( $_POST['seo_crawler_nonce'] ) ) : ''; // phpcs:ignore WordPress.Security -- The nonce is being wp_unslash && verified after.
 	if ( ! wp_verify_nonce( $nonce, 'seo_crawler_nonce' ) ) {
 		return new WP_Error( 'invalid_nonce', 'The nonce verification failed.', [ 'status' => 400 ] );
 	}
@@ -46,10 +46,10 @@ function seo_crawler_form_handler() {
 	 * Handle the form data. Call the appropriate function based on which button was pressed.
 	 */
 	if ( isset( $_POST['crawl_button'] ) ) {
-		crawl_task( true );
-		schedule_crawl_event();
+		seo_crawler_crawl_task( true );
+		seo_crawler_schedule_crawl_event();
 	} elseif ( isset( $_POST['results_button'] ) ) {
-		display_latest_results();
+		seo_crawler_display_latest_results();
 	}
 }
 
