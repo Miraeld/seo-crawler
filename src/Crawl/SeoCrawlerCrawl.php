@@ -7,7 +7,7 @@ use SEO_Crawler\Db\SeoCrawlerDb;
 use SEO_Crawler\Exceptions\CrawlException;
 use SEO_Crawler\Exceptions\UnexpectedStatusCodeException;
 use SEO_Crawler\Exceptions\InvalidParameterTypeException;
-use SEO_Crawler\Utils\SeoCrawlerCommon;
+use SEO_Crawler\Utils\Common;
 use WP_Error;
 
 /**
@@ -113,7 +113,7 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 				$href = $anchor->getAttribute( 'href' );
 
 				// Check if the link is internal.
-				if ( SeoCrawlerCommon::is_internal_link( $href ) ) {
+				if ( Common::is_internal_link( $href ) ) {
 					$internal_links[] = $href;
 				}
 			}
