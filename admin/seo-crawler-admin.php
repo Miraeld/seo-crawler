@@ -6,11 +6,13 @@
 defined( 'ABSPATH' ) || exit;
 
 use \SEO_Crawler\Utils\Render;
+use \SEO_Crawler\Utils\Loader;
 
-/**
- * Hook into the admin_menu action to add SEO Crawler to the WordPress admin menu.
- */
-add_action( 'admin_menu', 'seo_crawler_add_admin_menu' );
+
+$seo_crawler_loader = new Loader();
+$seo_crawler_loader->add_action( 'admin_menu', 'seo_crawler_add_admin_menu' );
+$seo_crawler_loader->add_action( 'seo_crawler_crawl_event', 'seo_crawler_crawl_task' );
+
 
 /**
  * Adds a new top-level menu page for the SEO Crawler.
@@ -59,7 +61,6 @@ function seo_crawler_schedule_crawl_event() {
 	}
 }
 
-add_action( 'seo_crawler_crawl_event', 'seo_crawler_crawl_task' );
 
 /**
  * Performs the crawling task.
@@ -82,3 +83,4 @@ function seo_crawler_display_latest_results() {
 	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
 	Render::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
 }
+$seo_crawler_loader->run();
