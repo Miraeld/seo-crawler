@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Include the init plugin file.
-require_once plugin_dir_path( __FILE__ ) . 'src/init.php';
+require_once plugin_dir_path( __FILE__ ) . 'inc/init.php';
 
 /**
  * Handles the actions to be taken upon plugin activation.
@@ -20,7 +20,7 @@ require_once plugin_dir_path( __FILE__ ) . 'src/init.php';
  * This function is prefixed with the plugin name "seo_crawler" to avoid naming conflicts in the global namespace.
  */
 function seo_crawler_activate() {
-	$db = new \SEO_Crawler\Db\SeoCrawlerDb();
+	$db = new \SEO_Crawler\Db\DbTable();
 	$db->create_table();
 }
 
@@ -33,7 +33,7 @@ register_activation_hook( __FILE__, 'seo_crawler_activate' );
  * This function is prefixed with the plugin name "seo_crawler" to avoid naming conflicts in the global namespace.
  */
 function seo_crawler_deactivate() {
-	$db = new \SEO_Crawler\Db\SeoCrawlerDb();
+	$db = new \SEO_Crawler\Db\DbTable();
 	$db->drop_table();
 }
 

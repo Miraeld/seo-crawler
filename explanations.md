@@ -8,9 +8,9 @@ The problem at hand is to develop a SEO Crawler plugin for WordPress websites. T
 
 To solve this problem, the following steps are undertaken:
 
-1. **Crawling**: A PHP class `SeoCrawlerCrawl` is implemented which handles the crawling operations. It uses WordPress's `wp_remote_get` function to fetch web page content and `DOMDocument` to parse the HTML and extract the links.
+1. **Crawling**: A PHP class `Crawler` is implemented which handles the crawling operations. It uses WordPress's `wp_remote_get` function to fetch web page content and `DOMDocument` to parse the HTML and extract the links.
 
-2. **Database Operations**: The `SeoCrawlerDb` class communicates with the WordPress database, storing the results of the crawl.
+2. **Database Operations**: The `DbTable` class communicates with the WordPress database, storing the results of the crawl.
 
 3. **Sitemap Generation**: As part of the crawling process, a `sitemap.html` file is generated.
 
@@ -34,13 +34,13 @@ The code for this plugin is organized into multiple PHP files, each with a speci
 
 2. `init.php`: This file handles the initialization of the plugin, including loading the Composer autoloader and rendering views.
 
-3. `SeoCrawlerCrawl.php`: This class handles the crawling operations. It fetches web pages, parses the HTML, and extracts links.
+3. `Crawler.php`: This class handles the crawling operations. It fetches web pages, parses the HTML, and extracts links.
 
-4. `SeoCrawlerDb.php`: This class handles communication with the database, including storing the results of the crawl.
+4. `DbTable.php`: This class handles communication with the database, including storing the results of the crawl.
 
 5. `seo-crawler-admin.php`: This file handles the admin functions of the plugin, including creating the admin menu and rendering the settings page.
 
-6. `./src/Utils/Render.php`: This file handles everything related to views, including rendering views. 
+6. `./inc/Utils/Render.php`: This file handles everything related to views, including rendering views. 
 
 ## Achieving the Desired Outcome
 

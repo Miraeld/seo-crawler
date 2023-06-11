@@ -63,7 +63,7 @@ function seo_crawler_schedule_crawl_event() {
  * @param bool $render Whether to render the crawl results or not.
  */
 function seo_crawler_crawl_task( $render = false ) {
-	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
+	$crawler = new \SEO_Crawler\Crawl\Crawler();
 	$crawler->executeCrawl();
 
 	if ( $render ) {
@@ -75,7 +75,7 @@ function seo_crawler_crawl_task( $render = false ) {
  * Displays the latest crawl results.
  */
 function seo_crawler_display_latest_results() {
-	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
+	$crawler = new \SEO_Crawler\Crawl\Crawler();
 	Render::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
 }
 $seo_crawler_loader->run();
