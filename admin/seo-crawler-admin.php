@@ -5,7 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use \SEO_Crawler\Utils\SeoCrawlerView;
+use \SEO_Crawler\Utils\Render;
 
 /**
  * Hook into the admin_menu action to add SEO Crawler to the WordPress admin menu.
@@ -44,7 +44,7 @@ function seo_crawler_settings_page() {
 	}
 
 	// Render the settings page.
-	SeoCrawlerView::render_view( 'admin/settings/index' );
+	Render::render_view( 'admin/settings/index' );
 
 	require_once 'seo-crawler-form-handler.php';
 	seo_crawler_form_handler();
@@ -71,7 +71,7 @@ function seo_crawler_crawl_task( $render = false ) {
 	$crawler->executeCrawl();
 
 	if ( $render ) {
-		SeoCrawlerView::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
+		Render::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
 	}
 }
 
@@ -80,5 +80,5 @@ function seo_crawler_crawl_task( $render = false ) {
  */
 function seo_crawler_display_latest_results() {
 	$crawler = new \SEO_Crawler\Crawl\SeoCrawlerCrawl();
-	SeoCrawlerView::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
+	Render::render_view( 'admin/crawl/results', [ 'results' => $crawler->getLatestResults() ] );
 }

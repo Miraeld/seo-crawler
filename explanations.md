@@ -40,7 +40,7 @@ The code for this plugin is organized into multiple PHP files, each with a speci
 
 5. `seo-crawler-admin.php`: This file handles the admin functions of the plugin, including creating the admin menu and rendering the settings page.
 
-6. `./src/Utils/SeoCrawlerView.php`: This file handles everything related to views, including rendering views. 
+6. `./src/Utils/Render.php`: This file handles everything related to views, including rendering views. 
 
 ## Achieving the Desired Outcome
 
