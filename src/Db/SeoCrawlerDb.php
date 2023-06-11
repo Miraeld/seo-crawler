@@ -75,16 +75,18 @@ class SeoCrawlerDb extends SeoCrawlerAbstract {
 	/**
 	 * Insert a new row into the specified table.
 	 *
-	 * @param string $table The name of the table.
 	 * @param array  $fields The data to insert (in column => value pairs).
-	 * @param string $s The format of each of the values in the data.
+	 * @param string $format An array of formats to be mapped to each of the value in $data.
+	 *                  If string, that format will be used for all of the values in $data.
+	 *                  A format is one of '%d', '%f', '%s' (integer, float, string).
+	 *                  If omitted, all values in $data will be treated as strings unless otherwise specified in wpdb::$field_types.
 	 * @return void
 	 */
-	public function insert( $table, $fields, $s ) {
+	public function insert( $fields, $format = null ) {
 		$this->wpdb->insert(
-			$table,
+			$this->table,
 			$fields,
-			$s
+			$format
 		);
 	}
 }
