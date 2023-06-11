@@ -40,6 +40,8 @@ The code for this plugin is organized into multiple PHP files, each with a speci
 
 5. `seo-crawler-admin.php`: This file handles the admin functions of the plugin, including creating the admin menu and rendering the settings page.
 
+6. `./src/Utils/SeoCrawlerView.php`: This file handles everything related to views, including rendering views. 
+
 ## Achieving the Desired Outcome
 
 With this solution, the admin user can trigger a crawl, view the latest results, and know that the plugin will automatically perform a crawl every hour. The sitemap and homepage replication features provide additional SEO value. This solution effectively fulfills the user story and provides the admin with a powerful tool for improving their website's SEO.
