@@ -56,9 +56,11 @@ function seo_crawler_settings_page() {
  * Schedules the crawl event if it's not already scheduled.
  */
 function seo_crawler_schedule_crawl_event() {
-	if ( ! wp_next_scheduled( 'seo_crawler_crawl_event' ) ) {
-		wp_schedule_event( time(), 'hourly', 'seo_crawler_crawl_event' );
+	if ( wp_next_scheduled( 'seo_crawler_crawl_event' ) ) {
+		wp_clear_scheduled_hook( 'seo_crawler_crawl_event' );
 	}
+	wp_schedule_event( time(), 'hourly', 'seo_crawler_crawl_event' );
+	( new SEO_Crawler\Utils\Notice( 'success', 'Next crawl schedule in a hour!' ) )->render();
 }
 
 
