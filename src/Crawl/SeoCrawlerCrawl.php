@@ -7,6 +7,7 @@ use SEO_Crawler\Db\SeoCrawlerDb;
 use SEO_Crawler\Exceptions\CrawlException;
 use SEO_Crawler\Exceptions\UnexpectedStatusCodeException;
 use SEO_Crawler\Exceptions\InvalidParameterTypeException;
+use SEO_Crawler\Utils\SeoCrawlerCommon;
 use WP_Error;
 
 /**
@@ -112,7 +113,7 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 				$href = $anchor->getAttribute( 'href' );
 
 				// Check if the link is internal.
-				if ( $this->isInternalLink( $href ) ) {
+				if ( SeoCrawlerCommon::is_internal_link( $href ) ) {
 					$internal_links[] = $href;
 				}
 			}
@@ -121,22 +122,6 @@ class SeoCrawlerCrawl extends SeoCrawlerAbstract {
 		}
 
 		return $internal_links;
-	}
-
-	/**
-	 * Checks if a given URL is an internal link.
-	 *
-	 * @param string $url The URL to check.
-	 *
-	 * @return bool Whether the URL is an internal link or not
-	 * @throws InvalidParameterTypeException When the $url parameter is not a string.
-	 */
-	protected function isInternalLink( $url ) {
-		if ( ! is_string( $url ) ) {
-			throw new InvalidParameterTypeException( __FUNCTION__, '$url is expected to be a string, ' . gettype( $url ) . ' given' );
-		}
-
-		return strpos( $url, $this->home_url ) === 0;
 	}
 
 	/**
