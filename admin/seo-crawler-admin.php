@@ -18,13 +18,6 @@ $seo_crawler_loader->add_action( 'seo_crawler_crawl_event', 'seo_crawler_crawl_t
  * Adds a new top-level menu page for the SEO Crawler.
  */
 function seo_crawler_add_admin_menu() {
-	// The title to be displayed in the browser title bar.
-	// The text to be used for the menu.
-	// The required capability of users to access this menu.
-	// The slug by which this menu will be referred to.
-	// The callback function used to render the settings page.
-	// The icon to be used for this menu.
-	// The position in the menu order this one should appear.
 	add_menu_page(
 		'SEO Crawler Settings',
 		'SEO Crawler',
