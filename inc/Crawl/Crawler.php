@@ -69,13 +69,13 @@ class Crawler extends SeoCrawlerAbstract {
 	 * @return void
 	 */
 	protected function deleteSitemapFile() {
-		require_once(ABSPATH . 'wp-admin/includes/file.php');
+		require_once ABSPATH . 'wp-admin/includes/file.php';
 		WP_Filesystem();
 		global $wp_filesystem;
 
 		$sitemap_file = ABSPATH . 'sitemap.html';
-		if ($wp_filesystem->exists($sitemap_file)) {
-			$wp_filesystem->delete($sitemap_file);
+		if ( $wp_filesystem->exists( $sitemap_file ) ) {
+			$wp_filesystem->delete( $sitemap_file );
 		}
 	}
 	/**
