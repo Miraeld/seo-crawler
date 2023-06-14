@@ -36,10 +36,10 @@ abstract class SeoCrawlerAbstract {
 	 *
 	 * Initializes the database object, and sets the table name.
 	 *
-	 * @param null|\WPDB instance of the database
+	 * @param null|\WPDB $wpdb instance of the database.
 	 */
 	public function __construct( $wpdb = null ) {
-		if ( $wpdb === null ) {
+		if ( null === $wpdb ) {
 			global $wpdb;
 			$this->wpdb = $wpdb;
 		} else {
