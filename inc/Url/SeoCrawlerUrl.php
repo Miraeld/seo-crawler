@@ -27,8 +27,8 @@ class SeoCrawlerUrl {
 	/**
 	 * SeoCrawlerUrl constructor.
 	 *
-	 * @param string $url The URL.
-	 * @param mixed  $date The date the URL was crawled. This can be a string or a DateTime object.
+	 * @param string          $url The URL.
+	 * @param DateTime|string $date The date the URL was crawled. This can be a string or a DateTime object.
 	 * @throws InvalidParameterTypeException If $url is not a string, or $date is not a string or DateTime object.
 	 */
 	public function __construct( $url, $date ) {
@@ -38,9 +38,17 @@ class SeoCrawlerUrl {
 		$this->url = esc_html( $url );
 
 		if ( is_string( $date ) ) {
-			$this->creation_date = new \DateTime( $date );
-		} elseif ( get_class( $date ) === 'DateTime' ) {
-			$this->creation_date = $date;
+			try {
+				$this->creation_date = new \DateTime( $date );
+			} catch ( \Exception $e ) {
+				throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a formatted (YYYY-mm-dd) string or datetime, ' . gettype( $date ) . ' given' );
+			}
+		} elseif ( is_object( $date ) ) {
+			if ( get_class( $date ) === 'DateTime' ) {
+				$this->creation_date = $date;
+			} else {
+				throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a string or datetime, ' . gettype( $date ) . ' given' );
+			}
 		} else {
 			throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a string or datetime, ' . gettype( $date ) . ' given' );
 		}

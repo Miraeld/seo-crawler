@@ -34,9 +34,14 @@
 			"SEO_Crawler\\": "inc/"
 		}
 	},
-	"autoload-dev": {},
+	"autoload-dev": {
+		"psr-4": {
+			"SEO_Crawler\\": "inc/",
+			"SEO_Crawler\\Tests\\":"tests/"
+		}
+	},
 	"scripts": {
-		"test-unit": "\"vendor/bin/wpmedia-phpunit\" unit path=Tests/Unit",
+		"test-unit": "\"vendor/bin/phpunit\" --testsuite unit --colors=always --configuration tests/Unit/phpunit.xml.dist",
 		"test-integration": "\"vendor/bin/wpmedia-phpunit\" integration path=Tests/Integration/",
 		"run-tests": [
 			"@test-unit",
