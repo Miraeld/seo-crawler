@@ -27,6 +27,13 @@ class CrawlerTest extends TestCase {
     private $mock_crawler_db;
 
     /**
+     * FileSystem Mocked.
+     *
+     * @var Mockery
+     */
+    private $file_system_mock;
+
+    /**
      * Setup for each test.
      * Initializes the mock objects and the class being tested.
      * 
@@ -41,8 +48,11 @@ class CrawlerTest extends TestCase {
             return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
         });
         $this->mock_crawler_db = Mockery::mock('overload:SEO_Crawler\Db\DbTable');
-
-        $this->seo_crawler = new Crawler();
+        // Create mock for the FileSystem class.
+        $this->file_system_mock = Mockery::mock('overload:SEO_Crawler\Utils\FileSystem');
+        $this->file_system_mock->shouldReceive('delete_file')->andReturnNull();
+        $this->file_system_mock->shouldReceive('create_file')->andReturn(true);
+        $this->seo_crawler = new Crawler($this->file_system_mock);
 
         // Use reflection to set the crawler_db property to the mock object
         $reflection = new ReflectionClass($this->seo_crawler);
@@ -50,6 +60,11 @@ class CrawlerTest extends TestCase {
         $property->setAccessible(true);
         $property->setValue($this->seo_crawler, $this->mock_crawler_db);
 
+    }
+
+    public function tearDown(): void {
+        Mockery::close();
+        parent::tearDown();
     }
 
     /**
@@ -115,7 +130,7 @@ class CrawlerTest extends TestCase {
 
 
         // Create mock for the Crawler class with specific methods to mock
-        $crawlerMock = Mockery::mock(Crawler::class)->makePartial()
+        $crawlerMock = Mockery::mock('SEO_Crawler\Crawl\Crawler', [$this->file_system_mock])->makePartial()
             ->shouldAllowMockingProtectedMethods();
     
         // Define the expected result of the crawlInternalLinks method
@@ -123,10 +138,10 @@ class CrawlerTest extends TestCase {
     
         // Define the expectations for each method call
         $crawlerMock->shouldReceive('deletePreviousResults')->once()->andReturn(true);
-        $crawlerMock->shouldReceive('deleteSitemapFile')->once()->andReturnNull();
         $crawlerMock->shouldReceive('crawlInternalLinks')->with('http://127.0.0.1')->andReturn($expectedLinks);
         $crawlerMock->shouldReceive('storeResults')->once()->with($expectedLinks)->andReturn(true);
         $crawlerMock->shouldReceive('saveHomePageAsHtml')->once()->andReturn(true);
+        $crawlerMock->shouldReceive('deleteSitemapFile')->once()->andReturnNull();
         $crawlerMock->shouldReceive('createSitemapFile')->once()->with($expectedLinks)->andReturn(true);
     
         // Call the method under test
@@ -162,21 +177,19 @@ class CrawlerTest extends TestCase {
             ->with($wpRemoteGetResponse)
             ->andReturn($wpRemoteGetResponse['body']);
 
-
         // Create mock for the Crawler class with specific methods to mock
-        $crawlerMock = Mockery::mock(Crawler::class)->makePartial()
+        $crawlerMock = Mockery::mock('SEO_Crawler\Crawl\Crawler')->makePartial()
             ->shouldAllowMockingProtectedMethods();
     
         // Define the expected result of the crawlInternalLinks method
         $expectedLinks = ['http://127.0.0.1/page1', 'http://127.0.0.1/page2'];
-        $storeResultParams = "http://127.0.0.1/page1";
     
         // Define the expectations for each method call
         $crawlerMock->shouldReceive('deletePreviousResults')->andReturn(true);
-        $crawlerMock->shouldReceive('deleteSitemapFile')->andReturnNull();
         $crawlerMock->shouldReceive('crawlInternalLinks')->with('http://127.0.0.1')->andReturn($expectedLinks);
         $crawlerMock->shouldReceive('storeResults')->andThrow(InvalidParameterTypeException::class);
         $crawlerMock->shouldReceive('saveHomePageAsHtml')->never();
+        $crawlerMock->shouldReceive('deleteSitemapFile')->never();
         $crawlerMock->shouldReceive('createSitemapFile')->never();
     
         $this->expectException(InvalidParameterTypeException::class);
@@ -214,9 +227,8 @@ class CrawlerTest extends TestCase {
             ->with($wpRemoteGetResponse)
             ->andReturn($wpRemoteGetResponse['body']);
 
-
         // Create mock for the Crawler class with specific methods to mock
-        $crawlerMock = Mockery::mock(Crawler::class)->makePartial()
+        $crawlerMock = Mockery::mock('SEO_Crawler\Crawl\Crawler', [$this->file_system_mock])->makePartial()
             ->shouldAllowMockingProtectedMethods();
     
         // Define the expected result of the crawlInternalLinks method
@@ -224,10 +236,10 @@ class CrawlerTest extends TestCase {
     
         // Define the expectations for each method call
         $crawlerMock->shouldReceive('deletePreviousResults')->once()->andReturn(true);
-        $crawlerMock->shouldReceive('deleteSitemapFile')->once()->andReturnNull();
         $crawlerMock->shouldReceive('crawlInternalLinks')->with('http://127.0.0.1')->andReturn($expectedLinks);
         $crawlerMock->shouldReceive('storeResults')->once()->with($expectedLinks)->andReturn(true);
         $crawlerMock->shouldReceive('saveHomePageAsHtml')->once()->andReturn(true);
+        $crawlerMock->shouldReceive('deleteSitemapFile')->once()->andReturnNull();
         $crawlerMock->shouldReceive('createSitemapFile')->once()->with($expectedLinks)->andReturn(true);
     
         // Call the method under test
@@ -265,7 +277,7 @@ class CrawlerTest extends TestCase {
 
 
         // Create mock for the Crawler class with specific methods to mock
-        $crawlerMock = Mockery::mock(Crawler::class)->makePartial()
+        $crawlerMock = Mockery::mock('SEO_Crawler\Crawl\Crawler')->makePartial()
             ->shouldAllowMockingProtectedMethods();
     
         // Define the expected result of the crawlInternalLinks method
@@ -273,11 +285,12 @@ class CrawlerTest extends TestCase {
     
         // Define the expectations for each method call
         $crawlerMock->shouldReceive('deletePreviousResults')->once()->andReturn(true);
-        $crawlerMock->shouldReceive('deleteSitemapFile')->once()->andReturnNull();
         $crawlerMock->shouldReceive('crawlInternalLinks')->with('http://127.0.0.1')->andThrow(CrawlException::class);
         $crawlerMock->shouldReceive('storeResults')->never();
         $crawlerMock->shouldReceive('saveHomePageAsHtml')->never();
+        $crawlerMock->shouldReceive('deleteSitemapFile')->never();
         $crawlerMock->shouldReceive('createSitemapFile')->never();
+
     
         // Call the method under test
         $this->expectException(CrawlException::class);

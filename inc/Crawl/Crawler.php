@@ -8,6 +8,7 @@ use SEO_Crawler\Exceptions\CrawlException;
 use SEO_Crawler\Exceptions\UnexpectedStatusCodeException;
 use SEO_Crawler\Exceptions\InvalidParameterTypeException;
 use SEO_Crawler\Utils\Common;
+use SEO_Crawler\Utils\FileSystem;
 use WP_Error;
 
 /**
@@ -31,13 +32,29 @@ class Crawler extends SeoCrawlerAbstract {
 	protected $home_url;
 
 	/**
+	 * Instance of FileSystem to be able to manipulate files.
+	 *
+	 * @var FileSystem
+	 */
+	protected $file_system;
+	/**
 	 * CrawlSeoCrawler constructor.
 	 * Initializes the home_url property
+	 *
+	 * @param FileSystem|null $file_system Dependency injection.
+	 * @throws InvalidParameterTypeException If $file_system does not have the right type.
 	 */
-	public function __construct() {
+	public function __construct( $file_system = null ) {
 		parent::__construct();
 		$this->home_url   = get_home_url();
 		$this->crawler_db = new DbTable();
+		if ( null === $file_system ) {
+			$this->file_system = new FileSystem();
+		} elseif ( $file_system instanceof FileSystem ) {
+			$this->file_system = $file_system;
+		} else {
+			throw new InvalidParameterTypeException( __FUNCTION__, '$file_system should be a FileSystem type or null.' );
+		}
 	}
 
 	/**
@@ -47,10 +64,10 @@ class Crawler extends SeoCrawlerAbstract {
 	 */
 	public function executeCrawl() {
 		$this->deletePreviousResults();
-		$this->deleteSitemapFile();
 		$internal_links = array_unique( $this->crawlInternalLinks( $this->home_url ) );
 		$this->storeResults( $internal_links );
 		$this->saveHomePageAsHtml();
+		$this->deleteSitemapFile();
 		$this->createSitemapFile( $internal_links );
 	}
 
@@ -69,15 +86,10 @@ class Crawler extends SeoCrawlerAbstract {
 	 * @return void
 	 */
 	protected function deleteSitemapFile() {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		WP_Filesystem();
-		global $wp_filesystem;
-
 		$sitemap_file = ABSPATH . 'sitemap.html';
-		if ( $wp_filesystem->exists( $sitemap_file ) ) {
-			$wp_filesystem->delete( $sitemap_file );
-		}
+		$this->file_system->delete_file( $sitemap_file );
 	}
+
 	/**
 	 * Crawls the internal links of a given URL
 	 *
@@ -161,19 +173,10 @@ class Crawler extends SeoCrawlerAbstract {
 			$homepage_content = wp_remote_retrieve_body( $response );
 			$html_file_path   = ABSPATH . 'homepage.html';
 
-			WP_Filesystem();
-			global $wp_filesystem;
-			if ( empty( $wp_filesystem ) ) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
-				WP_Filesystem();
-			}
-
-			if ( $wp_filesystem ) {
-				return $wp_filesystem->put_contents( $html_file_path, $homepage_content, FS_CHMOD_FILE );
-			} else {
-				return false;
-			}
+			return $this->file_system->create_file( $homepage_content, $html_file_path );
 		}
+
+		return false;
 	}
 
 
@@ -192,18 +195,7 @@ class Crawler extends SeoCrawlerAbstract {
 		}
 		$sitemap_html .= '</ul>';
 
-		WP_Filesystem();
-		global $wp_filesystem;
-		if ( empty( $wp_filesystem ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-			WP_Filesystem();
-		}
-
-		if ( $wp_filesystem ) {
-			return $wp_filesystem->put_contents( $sitemap_file, $sitemap_html, FS_CHMOD_FILE );
-		} else {
-			return false;
-		}
+		return $this->file_system->create_file( $sitemap_html, $sitemap_file );
 	}
 
 	/**
