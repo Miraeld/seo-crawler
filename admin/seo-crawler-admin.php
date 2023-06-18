@@ -16,6 +16,8 @@ $seo_crawler_loader->add_action( 'seo_crawler_crawl_event', 'seo_crawler_crawl_t
 
 /**
  * Adds a new top-level menu page for the SEO Crawler.
+ *
+ * @return void
  */
 function seo_crawler_add_admin_menu() {
 	add_menu_page(
@@ -31,6 +33,8 @@ function seo_crawler_add_admin_menu() {
 
 /**
  * Renders the SEO Crawler settings page and handles the crawl action.
+ *
+ * @return void
  */
 function seo_crawler_settings_page() {
 	// Check user capabilities.
@@ -47,6 +51,8 @@ function seo_crawler_settings_page() {
 
 /**
  * Schedules the crawl event if it's not already scheduled.
+ *
+ * @return void
  */
 function seo_crawler_schedule_crawl_event() {
 	if ( wp_next_scheduled( 'seo_crawler_crawl_event' ) ) {
@@ -61,6 +67,8 @@ function seo_crawler_schedule_crawl_event() {
  * Performs the crawling task.
  *
  * @param bool $render Whether to render the crawl results or not.
+ *
+ * @return void
  */
 function seo_crawler_crawl_task( $render = false ) {
 	$crawler = new \SEO_Crawler\Crawl\Crawler();
@@ -73,6 +81,8 @@ function seo_crawler_crawl_task( $render = false ) {
 
 /**
  * Displays the latest crawl results.
+ *
+ * @return void
  */
 function seo_crawler_display_latest_results() {
 	$crawler = new \SEO_Crawler\Crawl\Crawler();

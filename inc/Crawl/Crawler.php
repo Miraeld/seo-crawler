@@ -37,9 +37,12 @@ class Crawler extends SeoCrawlerAbstract {
 	 * @var FileSystem
 	 */
 	protected $file_system;
+
 	/**
 	 * CrawlSeoCrawler constructor.
-	 * Initializes the home_url property
+	 * Initializes the home_url property.
+	 * Initializes the crawler_db property.
+	 * Initializes the file_system property.
 	 *
 	 * @param FileSystem|null $file_system Dependency injection.
 	 * @throws InvalidParameterTypeException If $file_system does not have the right type.
@@ -142,7 +145,7 @@ class Crawler extends SeoCrawlerAbstract {
 	/**
 	 * Stores the crawled links into the database
 	 *
-	 * @param array $links The links to store.
+	 * @param array $links Strings to store in the database.
 	 *
 	 * @return bool
 	 * @throws InvalidParameterTypeException When $links is not an array.
@@ -189,11 +192,11 @@ class Crawler extends SeoCrawlerAbstract {
 	 */
 	protected function createSitemapFile( $links ) {
 		$sitemap_file = ABSPATH . 'sitemap.html';
-		$sitemap_html = '<ul>';
+		$sitemap_html = '<ul>' . PHP_EOL;
 		foreach ( $links as $link ) {
-			$sitemap_html .= '<li>' . esc_html( $link ) . '</li>';
+			$sitemap_html .= '<li>' . esc_html( $link ) . '</li>' . PHP_EOL;
 		}
-		$sitemap_html .= '</ul>';
+		$sitemap_html .= '</ul>' . PHP_EOL;
 
 		return $this->file_system->create_file( $sitemap_html, $sitemap_file );
 	}

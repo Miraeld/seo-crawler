@@ -43,6 +43,8 @@ class Loader {
 	 * @param  string $callback      The name of the function definition on the $component.
 	 * @param  int    $priority      Optional. The priority at which the function should be fired. Default is 10.
 	 * @param  int    $accepted_args Optional. The number of arguments that should be passed to the $callback. Default is 1.
+	 *
+	 * @return void
 	 */
 	public function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
 		$this->actions = $this->add( $this->actions, $hook, $callback, $priority, $accepted_args );
@@ -55,6 +57,8 @@ class Loader {
 	 * @param  string $callback      The name of the function definition on the $component.
 	 * @param  int    $priority      Optional. The priority at which the function should be fired. Default is 10.
 	 * @param  int    $accepted_args Optional. The number of arguments that should be passed to the $callback. Default is 1.
+	 *
+	 * @return void
 	 */
 	public function add_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
 		$this->filters = $this->add( $this->filters, $hook, $callback, $priority, $accepted_args );
@@ -70,10 +74,9 @@ class Loader {
 	 * @param  string $callback      The name of the function definition on the $component.
 	 * @param  int    $priority      The priority at which the function should be fired.
 	 * @param  int    $accepted_args The number of arguments that should be passed to the $callback.
-	 * @return   array                                  The collection of actions and filters registered with WordPress.
+	 * @return array                 The collection of actions and filters registered with WordPress.
 	 */
 	private function add( $hooks, $hook, $callback, $priority, $accepted_args ) {
-
 		$hooks[] = [
 			'hook'          => $hook,
 			'callback'      => $callback,
@@ -82,14 +85,14 @@ class Loader {
 		];
 
 		return $hooks;
-
 	}
 
 	/**
 	 * Register the filters and actions with WordPress.
+	 *
+	 * @return void
 	 */
 	public function run() {
-
 		foreach ( $this->filters as $hook ) {
 			add_filter( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] );
 		}

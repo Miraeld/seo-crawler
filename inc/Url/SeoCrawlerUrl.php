@@ -44,13 +44,13 @@ class SeoCrawlerUrl {
 				throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a formatted (YYYY-mm-dd) string or datetime, ' . gettype( $date ) . ' given' );
 			}
 		} elseif ( is_object( $date ) ) {
-			if ( get_class( $date ) === 'DateTime' ) {
+			if ( $date instanceof \DateTime ) {
 				$this->creation_date = $date;
 			} else {
-				throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a string or datetime, ' . gettype( $date ) . ' given' );
+				throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a formatted string or datetime, ' . gettype( $date ) . ' given' );
 			}
 		} else {
-			throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a string or datetime, ' . gettype( $date ) . ' given' );
+			throw new InvalidParameterTypeException( __FUNCTION__, '$date is expected to be a formatted string or datetime, ' . gettype( $date ) . ' given' );
 		}
 	}
 

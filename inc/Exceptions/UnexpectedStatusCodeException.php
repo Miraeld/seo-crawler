@@ -8,6 +8,7 @@ namespace SEO_Crawler\Exceptions;
  * Exception thrown when an unexpected HTTP status code is received.
  */
 class UnexpectedStatusCodeException extends \Exception {
+
 	/**
 	 * UnexpectedStatusCodeException constructor.
 	 *
