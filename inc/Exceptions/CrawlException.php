@@ -8,6 +8,7 @@ namespace SEO_Crawler\Exceptions;
  * Exception class for crawl-related errors.
  */
 class CrawlException extends \Exception {
+
 	/**
 	 * CrawlException constructor.
 	 *

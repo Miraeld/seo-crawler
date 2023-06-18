@@ -48,6 +48,8 @@ class Notice extends NoticeEnum {
 
 	/**
 	 * Renders the notice using the Render class.
+	 *
+	 * @return void
 	 */
 	public function render() {
 		Render::render_view( 'admin/_partials/notice', [ 'notice' => $this ] );
