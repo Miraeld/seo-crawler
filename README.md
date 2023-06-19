@@ -5,7 +5,7 @@ SEO Crawler is a WordPress plugin developed as part of a technical test for WP M
 
 ## Explanations
 
-[Link to Explanations](explanations.md)
+[Link to Explanations](explanation.md)
 
 ## Repository Structure
 
