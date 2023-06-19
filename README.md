@@ -9,17 +9,7 @@ SEO Crawler is a WordPress plugin developed as part of a technical test for WP M
 
 ## Repository Structure
 
-This repository was initialized using a package template and it includes various configuration and setup files. Here's what you need to know about the content:
-
-- `bin/install-wp-tests.sh`: This is an installer for the WordPress test suite.
-- `.editorconfig`: This is a configuration file for your IDE to follow our coding standards.
-- `.gitattributes`: This file contains a list of directories & files excluded from export.
-- `.gitignore`: This file contains a list of directories & files excluded from versioning.
-- `.travis.yml`: This is a Travis-CI configuration file.
-- `composer.json`: This is the base composer file for the project.
-- `LICENSE`: This file contains the GPLv3 license for the project.
-- `phpcs.xml`: This is the base PHP Code Sniffer configuration file for the project.
-- `README.md`: This file serves as the readme displayed on Github.
+This repository was initialized using a package template and it includes various configuration and setup files.
 
 ## License
 
